@@ -5,26 +5,46 @@
 #include <Windows.h>
 #include <string>
 
-DWORD ProcessID;
+
 int main()
-{   
-    HWND hwnd = FindWindowA(0, ("AssaultCube"));
-    GetWindowThreadProcessId(hwnd, &ProcessID);
+{
+    DWORD ProcessID;
+    HWND hwnd = FindWindowA(0, ("AssaultCube")); // We will be targetting AssaultCube
+    GetWindowThreadProcessId(hwnd, &ProcessID);  // Retrieving the Process ID of assaultCube
     if (hwnd) {
         std::cout << ProcessID << std::endl;
     }
     else {
-
+        std::cout << "unable to get processID" << std::endl;
+        return EXIT_FAILURE;
     }
+    //
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, ProcessID); //Making a handle to the process
+    
+    uintptr_t playerStruct =0x57B0B8; //0x400000 + 0x0017B0B8 -- 40000 is the best address and 0017b0b8 is the offset to the player struct
+    int localPlayer = 0;
+    uintptr_t ammoOffset = 0x140;
+    int ammo = 0;
+    if (hProcess == 0) { //if we were not able to get the handle we abort
+        std::cout << "OpenProcess failed, Error: " << std::dec << GetLastError() << std::endl;
+        return EXIT_FAILURE;
+    }
+    
+    //Follow the pointer to the playerStruct
+    BOOL rpmReturn = ReadProcessMemory(hProcess, (LPCVOID)playerStruct, &localPlayer, sizeof(localPlayer), NULL);
+    std::cout << localPlayer << std::endl;
+
+    //Access the ammo from the pointer result + the offset
+    ReadProcessMemory(hProcess, (LPCVOID)(localPlayer + ammoOffset), &ammo, sizeof(ammo), NULL);
+    if (rpmReturn == FALSE) {
+        std::cout << "GetLast error: "<< std::dec << GetLastError() << std::endl;
+        return EXIT_FAILURE;
+    }
+    //Print out the ammo
+    std::cout << ammo << std::endl;
+    CloseHandle(hProcess);
+    return EXIT_SUCCESS;
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+
