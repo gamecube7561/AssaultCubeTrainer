@@ -6,6 +6,7 @@
 #include <string>
 
 
+
 int main()
 {
     DWORD ProcessID;
@@ -43,6 +44,9 @@ int main()
     //Print out the ammo
     std::cout << ammo << std::endl;
     CloseHandle(hProcess);
+
+    
+
     return EXIT_SUCCESS;
 }
 
