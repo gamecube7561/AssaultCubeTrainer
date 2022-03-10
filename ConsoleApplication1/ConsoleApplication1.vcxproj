@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{720eb4e8-a4d4-4dc9-aa4a-64fb2f5147cc}</ProjectGuid>
-    <RootNamespace>ConsoleApplication1</RootNamespace>
+    <RootNamespace>AssaultTrainer</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>AssaultTrainer</ProjectName>
   </PropertyGroup>
@@ -142,11 +142,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ConsoleApplication1.cpp" />
+    <ClCompile Include="AssaultTrainer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="logInfo.h" />
-    <ClInclude Include="PlayerInfo.h" />
+    <ClInclude Include="headers\logInfo.h" />
+    <ClInclude Include="headers\PlayerInfo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
