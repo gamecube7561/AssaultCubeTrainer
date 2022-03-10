@@ -5,12 +5,14 @@
 #include <Windows.h>
 #include <iostream>
 #include <string>
-#include "logger.h"
+#include "logInfo.h"
+#include "PlayerInfo.h"
 
 
 
 int main()
 {
+    playerInfo offsets;
     DWORD ProcessID;
     HWND hwnd = FindWindowA(0, ("AssaultCube")); // We will be targetting AssaultCube
     GetWindowThreadProcessId(hwnd, &ProcessID);  // Retrieving the Process ID of assaultCube
@@ -25,9 +27,9 @@ int main()
     //
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, ProcessID); //Making a handle to the process
     
-    uintptr_t playerStruct =0x57B0B8; //0x400000 + 0x0017B0B8 -- 40000 is the best address and 0017b0b8 is the offset to the player struct
+    uintptr_t playerStruct = offsets.base; //0x400000 + 0x0017B0B8 -- 40000 is the best address and 0017b0b8 is the offset to the player struct
     int localPlayer = 0;
-    uintptr_t ammoOffset = 0x140;
+    uintptr_t ammoOffset = offsets.ammo_ar;
     uintptr_t ammoAddress = playerStruct + ammoOffset;
     int ammo = 0;
     if (hProcess == 0) { //if we were not able to get the handle we abort
@@ -46,16 +48,13 @@ int main()
         return EXIT_FAILURE;
     }
     //Print out the ammo
-    std::string s = "Player's carbine ammo: " + std::to_string(ammo);
-    logOut(s);
+    logOut("Player's carbine ammo: " + std::to_string(ammo));
 
-    int newAmmo = 20;
-    WriteProcessMemory(hProcess, (LPVOID)(localPlayer + ammoOffset), &newAmmo, sizeof(ammo), NULL);
+    int newAmmo = 20; //ammo value to be written to the memory
+    WriteProcessMemory(hProcess, (LPVOID)(localPlayer + ammoOffset), &newAmmo, sizeof(ammo), NULL); //set the players ammo;
     logOut("Player's carbine ammo has been set to: " + std::to_string(newAmmo));
 
-    CloseHandle(hProcess);
-
-    
+    CloseHandle(hProcess); //close the handle to the game
 
     return EXIT_SUCCESS;
 }
