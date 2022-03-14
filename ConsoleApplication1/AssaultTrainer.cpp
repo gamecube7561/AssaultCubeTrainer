@@ -55,26 +55,34 @@ int main()
      
     int userInput = 1;
 
-    while (userInput != 0) {
-        logOut("What do you want to do\n0: Quit \n1: Display Carbine ammo \n2: Change Carbine ammo");
+    while (userInput != 0) {   
+        logOut("What do you want to do\n0: Quit \n1: Display Carbine ammo \n2: Change Carbine ammo\n3: Infinite Ammo");
         std::cin >> userInput;
         switch (userInput) {
             case 1:
                 ReadProcessMemory(hProcess, (LPCVOID)(localPlayer + ammoOffset), &ammo, sizeof(ammo), NULL);
+                logOut("\x1B[2J\x1B[H");
                 logOut("Current Carbine Ammo: " + std::to_string(ammo));
-                logOut("");
                 break;
             case 2:
                 logOut("Enter The New Ammo Count");
                 std::cin >> newAmmo;
-                WriteProcessMemory(hProcess, (LPVOID)(localPlayer + ammoOffset), &newAmmo, sizeof(newAmmo), NULL);
-                logOut("");
+                WriteProcessMemory(hProcess, (LPVOID)(localPlayer + ammoOffset), &newAmmo, sizeof(newAmmo), NULL);              
+                logOut("\x1B[2J\x1B[H");
+                break;
+            case 3: 
+                while (!GetKeyState(VK_NUMPAD1)) {
+                    logOut("1 not pressed;");
+                    WriteProcessMemory(hProcess, (LPVOID)(localPlayer + ammoOffset), &newAmmo, sizeof(newAmmo), NULL);
+                    Sleep(1000);
+                }
                 break;
             default:
                 logOut("Quitting trainer");
                 userInput = 0;
                 break;
         }
+        std::cin.clear();
     }
     CloseHandle(hProcess); //close the handle to the game
     return EXIT_SUCCESS;
